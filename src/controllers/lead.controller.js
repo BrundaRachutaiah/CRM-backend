@@ -113,17 +113,28 @@ exports.getLeadById = async (req, res, next) => {
  */
 exports.updateLead = async (req, res, next) => {
   try {
-    const lead = await Lead.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const updateData = { ...req.body };
+    const existingLead = await Lead.findById(req.params.id);
 
-    if (!lead) {
+    if (!existingLead) {
       const err = new Error('Lead not found');
       err.statusCode = 404;
       throw err;
     }
+
+    if (updateData.status === 'Closed' && !existingLead.closedAt) {
+      updateData.closedAt = new Date();
+    }
+
+    if (updateData.status && updateData.status !== 'Closed') {
+      updateData.closedAt = null;
+    }
+
+    const lead = await Lead.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
 
     res.status(200).json({
       success: true,
