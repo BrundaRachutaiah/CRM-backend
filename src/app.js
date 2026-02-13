@@ -5,16 +5,28 @@ const connectDB = require('./config/db');
 const app = express();
 const errorHandler = require('./middleware/error.middleware');
 
+const defaultOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+const envOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
 /* =======================
    MIDDLEWARE
 ======================= */
 
 // ✅ CORS — REQUIRED for local frontend → deployed backend
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000'
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   credentials: true
 }));
