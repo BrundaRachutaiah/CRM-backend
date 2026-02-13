@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./config/db');
 
 const app = express();
 const errorHandler = require('./middleware/error.middleware');
@@ -19,6 +20,14 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 /* =======================
    ROUTES

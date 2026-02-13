@@ -1,11 +1,11 @@
-require('./config/env');   // load env once
-const connectDB = require('./config/db');
+require('./config/env');
 const app = require('./app');
 
-const PORT = process.env.PORT || 5000;
+module.exports = app;
 
-connectDB();
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
