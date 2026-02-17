@@ -3,10 +3,12 @@ const router = express.Router();
 
 const {
   createSalesAgent,
-  getAllSalesAgents
+  getAllSalesAgents,
+  deleteSalesAgent
 } = require('../controllers/salesAgent.controller');
 
 router.post('/agents', createSalesAgent);
 router.get('/agents', getAllSalesAgents);
+router.delete('/agents/:id', deleteSalesAgent);
 
 module.exports = router;

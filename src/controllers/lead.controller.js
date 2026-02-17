@@ -1,6 +1,7 @@
 const Lead = require('../models/Lead.model');
 const SalesAgent = require('../models/SalesAgent.model');
 const Tag = require('../models/Tag.model');
+const mongoose = require('mongoose');
 
 /**
  * POST /api/leads
@@ -46,17 +47,26 @@ exports.getAllLeads = async (req, res, next) => {
     if (status) filter.status = status;
     if (source) filter.source = source;
 
-    // Filter by sales agent name
+    // Filter by sales agent id or partial name match
     if (salesAgent) {
-      const agent = await SalesAgent.findOne({ name: salesAgent });
-      if (!agent) {
-        return res.status(200).json({
-          success: true,
-          count: 0,
-          data: []
-        });
+      if (mongoose.Types.ObjectId.isValid(salesAgent)) {
+        filter.salesAgent = salesAgent;
+      } else {
+        const agents = await SalesAgent.find({
+          name: { $regex: salesAgent, $options: 'i' }
+        }).select('_id');
+        const agentIds = agents.map(agent => agent._id);
+
+        if (agentIds.length === 0) {
+          return res.status(200).json({
+            success: true,
+            count: 0,
+            data: []
+          });
+        }
+
+        filter.salesAgent = { $in: agentIds };
       }
-      filter.salesAgent = agent._id;
     }
 
     // Filter by tag names

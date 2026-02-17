@@ -1,5 +1,7 @@
 const Comment = require('../models/Comment.model');
 const Lead = require('../models/Lead.model');
+const SalesAgent = require('../models/SalesAgent.model');
+const mongoose = require('mongoose');
 
 /**
  * POST /leads/:id/comments
@@ -8,7 +10,7 @@ const Lead = require('../models/Lead.model');
 exports.addCommentToLead = async (req, res) => {
   try {
     const leadId = req.params.id;
-    const { commentText } = req.body;
+    const { commentText, author } = req.body;
 
     // Validation
     if (!commentText || typeof commentText !== 'string') {
@@ -30,7 +32,20 @@ exports.addCommentToLead = async (req, res) => {
      * In real apps, author comes from auth middleware.
      * Here we assume salesAgentId is available in req.user
      */
-    const salesAgentId = req.user?.id || lead.salesAgent;
+    const salesAgentId = author || req.user?.id || lead.salesAgent;
+
+    if (!mongoose.Types.ObjectId.isValid(String(salesAgentId))) {
+      return res.status(400).json({
+        error: 'A valid author (sales agent) is required.'
+      });
+    }
+
+    const agentExists = await SalesAgent.exists({ _id: salesAgentId });
+    if (!agentExists) {
+      return res.status(400).json({
+        error: 'A valid author (sales agent) is required.'
+      });
+    }
 
     const comment = await Comment.create({
       lead: leadId,

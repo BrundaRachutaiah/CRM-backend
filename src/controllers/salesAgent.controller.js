@@ -68,3 +68,28 @@ exports.getAllSalesAgents = async (req, res) => {
     });
   }
 };
+
+/**
+ * DELETE /agents/:id
+ * Delete a sales agent
+ */
+exports.deleteSalesAgent = async (req, res) => {
+  try {
+    const agent = await SalesAgent.findByIdAndDelete(req.params.id);
+
+    if (!agent) {
+      return res.status(404).json({
+        error: 'Sales agent not found.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Sales agent deleted successfully.'
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    });
+  }
+};
