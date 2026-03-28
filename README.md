@@ -72,18 +72,6 @@ http://localhost:5000
 
 ---
 
-## 🔐 Environment Variables
-
-Create a `.env` file:
-
-```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-CORS_ORIGINS=http://localhost:5173
-```
-
----
-
 ## 📡 API Reference
 
 ### 📌 Leads
