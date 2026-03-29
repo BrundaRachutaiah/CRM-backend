@@ -386,27 +386,6 @@ Returns closed lead counts grouped by sales agent.
 
 ---
 
-## 🔐 Auth Middleware
-
-Authentication is mocked via the `x-agent-id` request header. In production, replace with JWT verification.
-
-```http
-x-agent-id: <sales-agent-object-id>
-```
-
----
-
-## 🔧 Environment Variables
-
-| Variable               | Required | Description                              |
-|------------------------|----------|------------------------------------------|
-| `MONGO_URI`            | ✅ Yes   | MongoDB connection string                |
-| `PORT`                 | —        | Server port (default: `5000`)            |
-| `VITE_API_FRONTEND_URL`| —        | Frontend origin for CORS                 |
-| `CORS_ORIGINS`         | —        | Comma-separated list of allowed origins  |
-
----
-
 ## 📬 Contact
 
 For bugs or feature requests, please open an issue or reach out at: `brundadr315@gmail.com`
